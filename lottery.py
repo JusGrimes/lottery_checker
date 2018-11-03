@@ -4,11 +4,15 @@ import requests
 import sqlite3
 import logging
 
+DB_file = "Lotto_numbers.db"
+
+
 class LottoNumber:
 
     def __init__(self, raw_number: str):
         self.first_numbers, self.powernum = self._parse_number(raw_number)
 
+    # noinspection PyMethodMayBeStatic
     def _parse_number(self, raw_number: str):
         splitlist = raw_number.split(':')
         first_five = splitlist[0].split()
@@ -17,18 +21,36 @@ class LottoNumber:
         return first_five, power_num
 
     def check_winners(self):
-        '''Check to see if any of the number combinations have won. Need to pass in DB connection'''
+        """Check to see if any of the number combinations have won. Need to pass in DB connection"""
+        pass
+
+    def _check_powerball(self):
+        pass
+
+    def _check_mega(self):
         pass
 
 
+def setup_db():
 
+    mega_csv_url = "https://data.ny.gov/api/views/5xaw-6ayf/rows.csv?accessType=DOWNLOAD"
+    powerball_csv_url = "https://data.ny.gov/api/views/5xaw-6ayf/rows.csv?accessType=DOWNLOAD"
 
+    mega_csv = requests.get(mega_csv_url).content
+    powerball_csv = requests.get(powerball_csv_url).content
+
+    conn = sqlite3.connect(DB_file)
+    # TODO Finish SQL statement for creating database
+    conn.execute("""
+                    CREATE TABLE mega_numbers (
+                    draw_date INTEGER
+                    winning_number TEXT""")
 
 #
 # def parse_number(rawstr: str)-> List[str]:
 #     return rawstr.split(':')
 #
-#
+# y lo
 # def check_winning_dates(json_response: List[Dict]):
 #     if json_response:
 #         print('Winning Dates: ')
@@ -56,13 +78,11 @@ class LottoNumber:
 #     check_winning_dates(pb_json)
 
 
-def lotto_num_prompt():
+def lotto_num_prompt() -> LottoNumber:
     number = input('Enter your lotto number as NN NN NN NN NN:NN')
-
-
+    return LottoNumber(number)
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-
 
     lotto_num = lotto_num_prompt()
